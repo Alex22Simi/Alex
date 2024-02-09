@@ -1,0 +1,82 @@
+<html>
+<head>
+    <title>
+        Program
+    </title>
+</head>
+<body>
+<form id="myform" action='adauga/'>
+    <input type="text" name="text_notita" id="text_notita">
+    <input type="submit" id="subb">
+</form>
+</body>
+<script>
+    const form=document.querySelector("#myform")
+
+ async function getRanduri()
+    {
+    let num=0;
+     const formData = new FormData();
+     formData.append("id_notita",-1);
+     formData.append("text_notita","test");
+     const request=new XMLHttpRequest();
+       request.open('POST','http://127.0.0.1:8000/notite/numar/')
+
+  request.onload= () =>
+  {
+  const res=JSON.parse(request.response);
+  let numar=res["Numar"];
+  console.log(numar);
+  for(i=1;i<=numar;i++)
+  {
+     const fData = new FormData();
+     fData.append("id_notita",i);
+     fData.append("text_notita","test");
+     const req=new XMLHttpRequest();
+     req.open('POST','http://127.0.0.1:8000/notite/rand/')
+       req.onload= () =>
+  {
+  num++;
+   let str=""
+   let elemDiv = document.createElement('div');
+    elemDiv.style.cssText = 'width:100%;height 30px';
+    const res=JSON.parse(req.response);
+    str+=num+". "+res["Text"];
+    elemDiv.innerText = str;
+    document.body.appendChild(elemDiv);
+  }
+  req.send(fData)
+
+
+  }
+
+  }
+  request.send(formData)
+
+
+    }
+
+getRanduri();
+
+    async function sendData() {
+  const formData = new FormData(form);
+  formData.append("id_notita",-1);
+  const request=new XMLHttpRequest();
+
+  request.open('POST','http://127.0.0.1:8000/notite/adauga/')
+
+  request.onload= () =>
+  {
+    console.log('sent')
+  }
+  request.send(formData)
+  location.reload();
+}
+
+// Take over form submission
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendData();
+});
+</script>
+</html>
